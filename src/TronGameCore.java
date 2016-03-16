@@ -1,179 +1,156 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TronGameCore extends Core implements KeyListener, MouseListener,
-		MouseMotionListener {
-	int centrex1 = 40;
-	int centrey1 = 40;
-	int centrex2 = 600;
-	int centrey2 = 440;
-	int currentDirection1 = 1;
-	int currentDirection2 = 3;
-	int moveAmount = 5;
-	ArrayList<Integer> pathx1 = new ArrayList();
-	ArrayList<Integer> pathy1 = new ArrayList();
-	ArrayList<Integer> pathx2 = new ArrayList();
-	ArrayList<Integer> pathy2 = new ArrayList();
+                                      MouseMotionListener {
 
-	public void init() {
-		super.init();
+    private List<Player> players = new ArrayList<>();
 
-		Window w = screenManager.getFullScreenWindow();
-		w.addKeyListener(this);
-		w.addMouseListener(this);
-		w.addMouseMotionListener(this);
-	}
+    public static void main(String[] args) {
+        new TronGameCore().run();
+    }
 
-	public static void main(String[] args) {
-		new TronGameCore().run();
-	}
+    public void init() {
+        super.init();
 
-	public void draw(Graphics2D g) {
-		switch(currentDirection1){
-		case 0:
-			if (centrey1>0){
-			centrey1-=moveAmount;
-			} else {
-				centrey1 = screenManager.getHeight();
-			}
-			break;
-		case 1:
-			if (centrex1 < screenManager.getWidth()){
-			centrex1+=moveAmount;
-			} else {
-				centrex1 = 0;
-			}
-			break;
-		case 2:
-			if (centrey1 < screenManager.getHeight()){
-			centrey1+=moveAmount;
-			} else {
-				centrey1 = 0;
-			}
-			break;
-		case 3:
-			if (centrex1>0){
-			centrex1-=moveAmount;
-			} else {
-				centrex1 = screenManager.getWidth();
-			}
-			break;
-		}
-		switch(currentDirection2){
-		case 0:
-			if (centrey2>0){
-			centrey2-=moveAmount;
-			} else {
-				centrey2 = screenManager.getHeight();
-			}
-			break;
-		case 1:
-			if (centrex2 < screenManager.getWidth()){
-			centrex2+=moveAmount;
-			} else {
-				centrex2 = 0;
-			}
-			break;
-		case 2:
-			if (centrey2 < screenManager.getHeight()){
-			centrey2+=moveAmount;
-			} else {
-				centrey2 = 0;
-			}
-			break;
-		case 3:
-			if (centrex2>0){
-			centrex2-=moveAmount;
-			} else {
-				centrex2 = screenManager.getWidth();
-			}
-			break;
-		}
-	    for (int x = 0;x<pathx1.size();x++){
-	    	if (((centrex1 == pathx1.get(x)) && (centrey1 == pathy1.get(x))) || ((centrex2 == pathx2.get(x)) && (centrey2 == pathy2.get(x))) || ((centrex1 == pathx2.get(x)) && (centrey1 == pathy2.get(x))) || ((centrex2 == pathx1.get(x)) && (centrey2 == pathy1.get(x)))){
-	    		System.exit(0);
-	    	}
-	    }
-		pathx1.add(centrex1);
-		pathy1.add(centrey1);
-		pathx2.add(centrex2);
-		pathy2.add(centrey2);
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, screenManager.getWidth(), screenManager.getHeight());
-		for (int x = 0;x<pathx1.size();x++){
-		g.setColor(Color.green);
-		g.fillRect(pathx1.get(x), pathy1.get(x), 10, 10);
-		g.setColor(Color.red);
-		g.fillRect(pathx2.get(x), pathy2.get(x), 10, 10);
-		}
-	}
+        this.createPlayers();
 
-	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			if (currentDirection1 != 2){
-			currentDirection1 = 0;
-			}
-		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			if (currentDirection1 != 0){
-				currentDirection1 = 2;
-				}
-		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			if (currentDirection1 != 3){
-				currentDirection1 = 1;
-				}
-		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			if (currentDirection1 != 1){
-				currentDirection1 = 3;
-				}
-		}
-		if (e.getKeyCode() == KeyEvent.VK_W){
-			if (currentDirection2 != 2){
-			currentDirection2 = 0;
-			}
-		} else if (e.getKeyCode() == KeyEvent.VK_S) {
-			if (currentDirection2 != 0){
-				currentDirection2 = 2;
-				}
-		} else if (e.getKeyCode() == KeyEvent.VK_D) {
-			if (currentDirection2 != 3){
-				currentDirection2 = 1;
-				}
-		} else if (e.getKeyCode() == KeyEvent.VK_A) {
-			if (currentDirection2 != 1){
-				currentDirection2 = 3;
-				}
-		}
-	}
-	public void keyReleased(KeyEvent e) {
+        Window w = screenManager.getFullScreenWindow();
+        w.addKeyListener(this);
+        w.addMouseListener(this);
+        w.addMouseMotionListener(this);
+    }
 
-	}
+    private void createPlayers() {
+        this.players.add(new Player(new Player.Point(40, 40),
+                                    Player.Direction.RIGHT,
+                                    Color.green,
+                                    new Player.Controls(KeyEvent.VK_UP,
+                                                        KeyEvent.VK_DOWN,
+                                                        KeyEvent.VK_LEFT,
+                                                        KeyEvent.VK_RIGHT)));
+        this.players.add(new Player(new Player.Point(600, 440),
+                                    Player.Direction.LEFT,
+                                    Color.red,
+                                    new Player.Controls(KeyEvent.VK_W,
+                                                        KeyEvent.VK_S,
+                                                        KeyEvent.VK_A,
+                                                        KeyEvent.VK_D)));
+    }
 
-	public void keyTyped(KeyEvent arg0) {
+    public void draw(Graphics2D g) {
+        movePlayers();
+        placeThemBack();
+        if (hasCollisions()) {
+            System.exit(1);
+        }
+        render(g);
+    }
 
-	}
+    private void movePlayers() {
+        for (Player player : this.players) {
+            player.move();
+        }
+    }
 
-	public void mouseClicked(MouseEvent e) {
+    private void placeThemBack() {
+        for (Player player : this.players) {
+            Player.Point position = player.getPosition();
+            if (position.getX() <= 0) {
+                player.setPosition(new Player.Point(screenManager.getWidth(),
+                                                    position.getY()));
+            }
+            if (position.getX() > screenManager.getWidth()) {
+                player.setPosition(new Player.Point(0,
+                                                    position.getY()));
+            }
+            if (position.getY() <= 0) {
+                player.setPosition(new Player.Point(position.getX(),
+                                                    screenManager.getHeight()));
 
-	}
+            }
+            if (position.getY() > screenManager.getHeight()) {
+                player.setPosition(new Player.Point(position.getX(),
+                                                    0));
+            }
+        }
+    }
 
-	public void mouseEntered(MouseEvent arg0) {
-	}
+    private boolean hasCollisions() {
+        for (Player p1 : players) {
+            for (Player p2 : players) {
+                if (p1 == p2) {
+                    if (p1.hasSelfCollision()) {
+                        return true;
+                    }
+                } else {
+                    if (hasAnySame(p1.getPosition(), p2.getPlacesVisited())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
-	public void mouseExited(MouseEvent arg0) {
-	}
+    private boolean hasAnySame(Player.Point current, List<Player.Point> allVisited) {
+        for (Player.Point visited : allVisited) {
+            if (current.equals(visited)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public void mousePressed(MouseEvent e) {
-	}
+    private void render(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, screenManager.getWidth(), screenManager.getHeight());
+        for (Player player : this.players) {
+            for (int x = 0; x < player.getPlacesVisited().size(); x++) {
+                g.setColor(player.getColor());
+                g.fillRect(player.getPlacesVisited().get(x).getX(),
+                           player.getPlacesVisited().get(x).getY(), 10, 10);
+            }
+        }
+    }
 
-	public void mouseReleased(MouseEvent e) {
-	}
+    public void keyPressed(KeyEvent e) {
+        for (Player player : this.players) {
+            player.sendKeyEvent(e.getKeyCode());
+        }
+    }
 
-	public void mouseDragged(MouseEvent e) {
+    public void keyReleased(KeyEvent e) {
 
-	}
+    }
 
-	public void mouseMoved(MouseEvent e) {
+    public void keyTyped(KeyEvent arg0) {
 
-	}
+    }
+
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    public void mouseEntered(MouseEvent arg0) {
+    }
+
+    public void mouseExited(MouseEvent arg0) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    public void mouseMoved(MouseEvent e) {
+
+    }
 }

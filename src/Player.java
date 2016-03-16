@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,12 +12,18 @@ public class Player {
 
     private Point position;
     private Direction currentDirection;
+    private Color color;
+    private Controls controls;
     private final List<Point> placesVisited = new ArrayList<>();
 
-    public Player(Point origin, Direction currentDirection) {
+    public Player(Point origin,
+                  Direction currentDirection,
+                  Color color,
+                  Controls controls) {
         this.position = origin;
         this.currentDirection = currentDirection;
-
+        this.color = color;
+        this.controls = controls;
         this.placesVisited.add(this.position);
     }
 
@@ -39,10 +46,38 @@ public class Player {
         this.placesVisited.add(this.position);
     }
 
+    public void sendKeyEvent(int keyCode) {
+        final Direction direction = this.controls.direction(keyCode);
+        if (direction != null) {
+            this.changeDirection(direction);
+        }
+    }
+
     public void changeDirection(Direction wantedDirection) {
         if (this.currentDirection.isPossible(wantedDirection)) {
             this.currentDirection = wantedDirection;
         }
+    }
+
+    public boolean hasSelfCollision() {
+        for (int i = 0; i < this.placesVisited.size() - 1; i++) {
+            if (this.position.equals(placesVisited.get(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Point getPosition() {
+        return position;
+    }
+
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public List<Point> getPlacesVisited() {
@@ -76,11 +111,19 @@ public class Player {
             this.y = y;
         }
 
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
         public Point toUp(int speed) {
-            return new Point(this.x, this.y + speed);
+            return new Point(this.x, this.y - speed);
         }
         public Point toDown(int speed) {
-            return new Point(this.x, this.y - speed);
+            return new Point(this.x, this.y + speed);
         }
         public Point toLeft(int speed) {
             return new Point(this.x - speed, this.y);
@@ -88,5 +131,54 @@ public class Player {
         public Point toRight(int speed) {
             return new Point(this.x + speed, this.y);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Point)) return false;
+
+            Point point = (Point) o;
+
+            if (getX() != point.getX()) return false;
+            return getY() == point.getY();
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = getX();
+            result = 31 * result + getY();
+            return result;
+        }
     }
+
+    public static class Controls {
+
+        private final int up;
+        private final int down;
+        private final int left;
+        private final int right;
+
+        public Controls(int up, int down, int left, int right) {
+            this.up = up;
+            this.down = down;
+            this.left = left;
+            this.right = right;
+        }
+
+        public Direction direction(int keyCode) {
+            if (keyCode == up) {
+                return Direction.UP;
+            } else if (keyCode == down) {
+                return Direction.DOWN;
+            } else if (keyCode == left) {
+                return Direction.LEFT;
+            } else if (keyCode == right) {
+                return Direction.RIGHT;
+            }
+            return null;
+        }
+
+    }
+
 }
