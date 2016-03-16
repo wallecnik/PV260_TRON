@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,8 +39,32 @@ public class Player {
         this.placesVisited.add(this.position);
     }
 
-    private enum Direction {
+    public void changeDirection(Direction wantedDirection) {
+        if (this.currentDirection.isPossible(wantedDirection)) {
+            this.currentDirection = wantedDirection;
+        }
+    }
+
+    public List<Point> getPlacesVisited() {
+        return Collections.unmodifiableList(placesVisited);
+    }
+
+    public enum Direction {
         UP, DOWN, LEFT, RIGHT;
+
+        private boolean isPossible(Direction direction) {
+            switch (this) {
+                case UP:
+                    return direction != DOWN;
+                case DOWN:
+                    return direction != UP;
+                case LEFT:
+                    return direction != RIGHT;
+                case RIGHT:
+                    return direction != LEFT;
+            }
+            return false;
+        }
     }
 
     public static class Point {
