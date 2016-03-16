@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class yourclass extends Core implements KeyListener, MouseListener,
+public class TronGame extends Core implements KeyListener, MouseListener,
 		MouseMotionListener {
 	int centrex1 = 40;
 	int centrey1 = 40;
@@ -26,7 +26,7 @@ public class yourclass extends Core implements KeyListener, MouseListener,
 	}
 
 	public static void main(String[] args) {
-		new yourclass().run();
+		new TronGame().run();
 	}
 
 	public void draw(Graphics2D g) {
