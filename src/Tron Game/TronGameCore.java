@@ -33,6 +33,14 @@ public class TronGameCore extends Core{
                                                         KeyEvent.VK_S,
                                                         KeyEvent.VK_A,
                                                         KeyEvent.VK_D)));
+        
+        this.players.add(new Player(new Player.Point(600, 120),
+                Player.Direction.LEFT,
+                Color.yellow,
+                new Player.Controls(KeyEvent.VK_U,
+                                    KeyEvent.VK_J,
+                                    KeyEvent.VK_H,
+                                    KeyEvent.VK_K)));
     }
     
     public Dimension getPlaygroundSize(){
