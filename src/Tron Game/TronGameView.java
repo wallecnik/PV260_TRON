@@ -1,16 +1,19 @@
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 public class TronGameView{
 	private TronGameCore gameCore;
+	private Dimension bounds;
 
-	public TronGameView( TronGameCore gameCore ){
+	public TronGameView( Dimension bounds, TronGameCore gameCore ){
+		this.bounds = bounds;
 		this.gameCore = gameCore;
 	}
 	
 	public void drawGameField(Graphics2D g){
 		g.setColor(Color.BLACK);
-        g.fillRect(0, 0, gameCore.getPlaygroundSize().width, gameCore.getPlaygroundSize().height);
+        g.fillRect(0, 0, bounds.width, bounds.height);
         for (Player player : gameCore.getPlayers() ) {
             for (int x = 0; x < player.getPlacesVisited().size(); x++) {
                 g.setColor(player.getColor());
