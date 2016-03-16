@@ -53,9 +53,9 @@ public class Player {
         }
     }
 
-    public void changeDirection(Direction wantedDirection) {
-        if (this.currentDirection.isPossible(wantedDirection)) {
-            this.currentDirection = wantedDirection;
+    public void changeDirection(Direction desiredDirection) {
+        if (this.currentDirection.isDirectionPossible(desiredDirection)) {
+            this.currentDirection = desiredDirection;
         }
     }
 
@@ -87,7 +87,7 @@ public class Player {
     public enum Direction {
         UP, DOWN, LEFT, RIGHT;
 
-        private boolean isPossible(Direction direction) {
+        private boolean isDirectionPossible(Direction direction) {
             switch (this) {
                 case UP:
                     return direction != DOWN;
@@ -141,7 +141,6 @@ public class Player {
 
             if (getX() != point.getX()) return false;
             return getY() == point.getY();
-
         }
 
         @Override
