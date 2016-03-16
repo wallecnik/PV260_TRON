@@ -1,29 +1,20 @@
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
-public abstract class Core {
+public abstract class Core implements KeyListener, MouseListener,
+MouseMotionListener  {
 	private boolean isRunning;
-	protected ScreenManager screenManager;
-	
-	public void init(){
-		screenManager = new ScreenManager();
-		screenManager.setFullscreen();
-		this.configureWindow( screenManager.getFullScreenWindow() );
-	}
-	
-	private void configureWindow(final Window w){
-		w.setFont(new Font("Arial",Font.PLAIN,20));
-		w.setBackground(Color.WHITE);
-		w.setForeground(Color.RED);
-		w.setCursor(w.getToolkit().createCustomCursor(new BufferedImage(3, 3, BufferedImage.TYPE_INT_ARGB), new Point(0, 0),"null")); 
-	}
+	public CoreInterface delegate;
 	
 	public void run(){
 		try{
-			init();
 			runGameLoop();
 		} finally {
-			screenManager.restoreScreen();
+			this.delegate.gameDidFinish();
 		}
 	}
 	
@@ -39,17 +30,53 @@ public abstract class Core {
 		isRunning = true;
 		
 		while (isRunning){
-			Graphics2D g = screenManager.getGraphics();
-			draw(g);
-			g.dispose();
-			screenManager.update();
-			
+			this.performGameTick();
+			this.delegate.gameDidTick();
 			try{
 				Thread.sleep( tickTime() );
 			} catch(Exception ex){
-				
+				this.delegate.gameDidFinish();
 			}
 		}
 	}
-	public abstract void draw(Graphics2D g);
+	
+	public void performGameTick(){
+		
+	}
+	
+	public void keyPressed(KeyEvent e) {
+		
+    }
+
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    public void keyTyped(KeyEvent arg0) {
+
+    }
+
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    public void mouseEntered(MouseEvent arg0) {
+    }
+
+    public void mouseExited(MouseEvent arg0) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    public void mouseMoved(MouseEvent e) {
+
+    }
 }

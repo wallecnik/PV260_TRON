@@ -3,51 +3,53 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TronGameCore extends Core implements KeyListener, MouseListener,
-                                      MouseMotionListener {
+public class TronGameCore extends Core{
 
     private List<Player> players = new ArrayList<>();
+    private Dimension playgroundSize;
 
-    public static void main(String[] args) {
-        new TronGameCore().run();
+    public void init () {
+    	this.createPlayers();
+    	this.playgroundSize = new Dimension( );
     }
-
-    public void init() {
-        super.init();
-
-        this.createPlayers();
-
-        Window w = screenManager.getFullScreenWindow();
-        w.addKeyListener(this);
-        w.addMouseListener(this);
-        w.addMouseMotionListener(this);
+    
+    public void initWithPlaygroundSize( Dimension playgroundSize ){
+    	this.init();
+        this.playgroundSize = playgroundSize;
     }
 
     private void createPlayers() {
         this.players.add(new Player(new Player.Point(40, 40),
                                     Player.Direction.RIGHT,
-                                    Color.green,
+                                    Color.red,
                                     new Player.Controls(KeyEvent.VK_UP,
                                                         KeyEvent.VK_DOWN,
                                                         KeyEvent.VK_LEFT,
                                                         KeyEvent.VK_RIGHT)));
         this.players.add(new Player(new Player.Point(600, 440),
                                     Player.Direction.LEFT,
-                                    Color.red,
+                                    Color.green,
                                     new Player.Controls(KeyEvent.VK_W,
                                                         KeyEvent.VK_S,
                                                         KeyEvent.VK_A,
                                                         KeyEvent.VK_D)));
     }
+    
+    public Dimension getPlaygroundSize(){
+    	return this.playgroundSize;
+    }
+    
+    public List<Player> getPlayers(){
+    	return this.players;
+    }
 
-    public void draw(Graphics2D g) {
-        movePlayers();
+    public void performGameTick(){
+    	movePlayers();
         placeThemBack();
         if (hasCollisions()) {
-            System.exit(1);
+            this.delegate.gameDidFinish();
         }
-        render(g);
-    }
+	}
 
     private void movePlayers() {
         for (Player player : this.players) {
@@ -59,19 +61,19 @@ public class TronGameCore extends Core implements KeyListener, MouseListener,
         for (Player player : this.players) {
             Player.Point position = player.getPosition();
             if (position.getX() <= 0) {
-                player.setPosition(new Player.Point(screenManager.getWidth(),
+                player.setPosition(new Player.Point(playgroundSize.width,
                                                     position.getY()));
             }
-            if (position.getX() > screenManager.getWidth()) {
+            if (position.getX() > playgroundSize.width) {
                 player.setPosition(new Player.Point(0,
                                                     position.getY()));
             }
             if (position.getY() <= 0) {
                 player.setPosition(new Player.Point(position.getX(),
-                                                    screenManager.getHeight()));
+                                                    playgroundSize.height));
 
             }
-            if (position.getY() > screenManager.getHeight()) {
+            if (position.getY() > playgroundSize.height) {
                 player.setPosition(new Player.Point(position.getX(),
                                                     0));
             }
@@ -104,53 +106,9 @@ public class TronGameCore extends Core implements KeyListener, MouseListener,
         return false;
     }
 
-    private void render(Graphics2D g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, screenManager.getWidth(), screenManager.getHeight());
-        for (Player player : this.players) {
-            for (int x = 0; x < player.getPlacesVisited().size(); x++) {
-                g.setColor(player.getColor());
-                g.fillRect(player.getPlacesVisited().get(x).getX(),
-                           player.getPlacesVisited().get(x).getY(), 10, 10);
-            }
-        }
-    }
-
     public void keyPressed(KeyEvent e) {
         for (Player player : this.players) {
             player.sendKeyEvent(e.getKeyCode());
         }
-    }
-
-    public void keyReleased(KeyEvent e) {
-
-    }
-
-    public void keyTyped(KeyEvent arg0) {
-
-    }
-
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    public void mouseEntered(MouseEvent arg0) {
-    }
-
-    public void mouseExited(MouseEvent arg0) {
-    }
-
-    public void mousePressed(MouseEvent e) {
-    }
-
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    public void mouseMoved(MouseEvent e) {
-
     }
 }
