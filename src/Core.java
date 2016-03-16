@@ -5,19 +5,6 @@ public abstract class Core {
 	private boolean isRunning;
 	protected ScreenManager screenManager;
 	
-	public void stop(){
-		isRunning = false;
-	}
-	
-	public void run(){
-		try{
-			init();
-			runGameLoop();
-		}finally{
-			screenManager.restoreScreen();
-		}
-	}
-	
 	public void init(){
 		screenManager = new ScreenManager();
 		screenManager.setFullscreen();
@@ -29,6 +16,19 @@ public abstract class Core {
 		w.setBackground(Color.WHITE);
 		w.setForeground(Color.RED);
 		w.setCursor(w.getToolkit().createCustomCursor(new BufferedImage(3, 3, BufferedImage.TYPE_INT_ARGB), new Point(0, 0),"null")); 
+	}
+	
+	public void run(){
+		try{
+			init();
+			runGameLoop();
+		} finally {
+			screenManager.restoreScreen();
+		}
+	}
+	
+	public void stop(){
+		isRunning = false;
 	}
 	
 	private int tickTime(){
