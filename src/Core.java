@@ -2,17 +2,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public abstract class Core {
-
-	private static final DisplayMode modes[] = 
-		{
-		new DisplayMode(1680,1050,32,0),
-		new DisplayMode(800,600,32,0),
-		new DisplayMode(800,600,24,0),
-		new DisplayMode(800,600,16,0),
-		new DisplayMode(640,480,32,0),
-		new DisplayMode(640,480,24,0),
-		new DisplayMode(640,480,16,0),
-		};
 	private boolean isRunning;
 	protected ScreenManager screenManager;
 	
@@ -23,7 +12,7 @@ public abstract class Core {
 	public void run(){
 		try{
 			init();
-			gameLoop();
+			runGameLoop();
 		}finally{
 			screenManager.restoreScreen();
 		}
@@ -31,11 +20,8 @@ public abstract class Core {
 	
 	public void init(){
 		screenManager = new ScreenManager();
-		DisplayMode dm = screenManager.findFirstCompatibaleMode(modes);
-		screenManager.setFullScreen(dm);
-		Window w = screenManager.getFullScreenWindow();
-		this.configureWindow(w);
-		isRunning = true;
+		screenManager.setFullscreen();
+		this.configureWindow( screenManager.getFullScreenWindow() );
 	}
 	
 	private void configureWindow(final Window w){
@@ -45,7 +31,13 @@ public abstract class Core {
 		w.setCursor(w.getToolkit().createCustomCursor(new BufferedImage(3, 3, BufferedImage.TYPE_INT_ARGB), new Point(0, 0),"null")); 
 	}
 	
-	public void gameLoop(){
+	private int tickTime(){
+		return 20;
+	}
+	
+	public void runGameLoop(){
+		isRunning = true;
+		
 		while (isRunning){
 			Graphics2D g = screenManager.getGraphics();
 			draw(g);
@@ -53,8 +45,10 @@ public abstract class Core {
 			screenManager.update();
 			
 			try{
-				Thread.sleep(20);
-			}catch(Exception ex){}
+				Thread.sleep( tickTime() );
+			} catch(Exception ex){
+				
+			}
 		}
 	}
 	public abstract void draw(Graphics2D g);
