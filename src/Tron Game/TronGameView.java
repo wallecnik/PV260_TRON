@@ -23,8 +23,7 @@ public class TronGameView{
         }
 	}
 
-	public void draw( Graphics2D drawingContext ){
-		this.drawGameField(drawingContext);
-		drawingContext.dispose();
+	public void draw( Graphics2D graphicsContext ){
+		this.drawGameField(graphicsContext);
 	}
 }
