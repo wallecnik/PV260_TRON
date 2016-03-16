@@ -19,7 +19,7 @@ public class TronGame extends Core implements KeyListener, MouseListener,
 	public void init() {
 		super.init();
 
-		Window w = sm.getFullScreenWindow();
+		Window w = screenManager.getFullScreenWindow();
 		w.addKeyListener(this);
 		w.addMouseListener(this);
 		w.addMouseMotionListener(this);
@@ -35,18 +35,18 @@ public class TronGame extends Core implements KeyListener, MouseListener,
 			if (centrey1>0){
 			centrey1-=moveAmount;
 			} else {
-				centrey1 = sm.getHeight();
+				centrey1 = screenManager.getHeight();
 			}
 			break;
 		case 1:
-			if (centrex1 < sm.getWidth()){
+			if (centrex1 < screenManager.getWidth()){
 			centrex1+=moveAmount;
 			} else {
 				centrex1 = 0;
 			}
 			break;
 		case 2:
-			if (centrey1 < sm.getHeight()){
+			if (centrey1 < screenManager.getHeight()){
 			centrey1+=moveAmount;
 			} else {
 				centrey1 = 0;
@@ -56,7 +56,7 @@ public class TronGame extends Core implements KeyListener, MouseListener,
 			if (centrex1>0){
 			centrex1-=moveAmount;
 			} else {
-				centrex1 = sm.getWidth();
+				centrex1 = screenManager.getWidth();
 			}
 			break;
 		}
@@ -65,18 +65,18 @@ public class TronGame extends Core implements KeyListener, MouseListener,
 			if (centrey2>0){
 			centrey2-=moveAmount;
 			} else {
-				centrey2 = sm.getHeight();
+				centrey2 = screenManager.getHeight();
 			}
 			break;
 		case 1:
-			if (centrex2 < sm.getWidth()){
+			if (centrex2 < screenManager.getWidth()){
 			centrex2+=moveAmount;
 			} else {
 				centrex2 = 0;
 			}
 			break;
 		case 2:
-			if (centrey2 < sm.getHeight()){
+			if (centrey2 < screenManager.getHeight()){
 			centrey2+=moveAmount;
 			} else {
 				centrey2 = 0;
@@ -86,7 +86,7 @@ public class TronGame extends Core implements KeyListener, MouseListener,
 			if (centrex2>0){
 			centrex2-=moveAmount;
 			} else {
-				centrex2 = sm.getWidth();
+				centrex2 = screenManager.getWidth();
 			}
 			break;
 		}
@@ -100,7 +100,7 @@ public class TronGame extends Core implements KeyListener, MouseListener,
 		pathx2.add(centrex2);
 		pathy2.add(centrey2);
 		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, sm.getWidth(), sm.getHeight());
+		g.fillRect(0, 0, screenManager.getWidth(), screenManager.getHeight());
 		for (int x = 0;x<pathx1.size();x++){
 		g.setColor(Color.green);
 		g.fillRect(pathx1.get(x), pathy1.get(x), 10, 10);
