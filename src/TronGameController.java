@@ -16,8 +16,8 @@ public class TronGameController implements CoreInterface {
 		this.makeWindowAndShow();
 		
 		this.gameCore = new TronGameCore( );
-		this.gameCore.delegate = this;
-        this.gameCore.initWithPlaygroundSize( new Dimension(screenManager.getWidth(), screenManager.getHeight()) );
+		this.gameCore.initWithPlaygroundSize( new Dimension(screenManager.getWidth(), screenManager.getHeight()) );
+        this.gameCore.delegate = this;
         this.gameView = new TronGameView( gameCore );
         
     	Window w = this.applicationWindow();

@@ -27,7 +27,7 @@ public class Player {
         this.placesVisited.add(this.position);
     }
 
-    public void move() {
+    public void makeStep() {
         switch(currentDirection){
             case DOWN:
                 this.position = this.position.toDown(SPEED);

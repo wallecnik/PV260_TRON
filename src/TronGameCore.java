@@ -45,19 +45,19 @@ public class TronGameCore extends Core{
 
     public void performGameTick(){
     	movePlayers();
-        placeThemBack();
-        if (hasCollisions()) {
+        returnPlayersWithinBounds();
+        if ( areThereCollisions() ) {
             this.delegate.gameDidFinish();
         }
 	}
 
     private void movePlayers() {
         for (Player player : this.players) {
-            player.move();
+            player.makeStep();
         }
     }
 
-    private void placeThemBack() {
+    private void returnPlayersWithinBounds() {
         for (Player player : this.players) {
             Player.Point position = player.getPosition();
             if (position.getX() <= 0) {
@@ -80,29 +80,48 @@ public class TronGameCore extends Core{
         }
     }
 
-    private boolean hasCollisions() {
-        for (Player p1 : players) {
+    private boolean areThereCollisions() {
+        for (Player p : players) {
+        	if ( p.hasSelfCollision() ) {
+                return true;
+            }
+        }
+        
+        for (Player p1 : players) {    
             for (Player p2 : players) {
-                if (p1 == p2) {
-                    if (p1.hasSelfCollision()) {
-                        return true;
-                    }
-                } else {
-                    if (hasAnySame(p1.getPosition(), p2.getPlacesVisited())) {
-                        return true;
-                    }
+            	if (doPlayersCollide(p1, p2) ) {
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    private boolean hasAnySame(Player.Point current, List<Player.Point> allVisited) {
-        for (Player.Point visited : allVisited) {
-            if (current.equals(visited)) {
-                return true;
-            }
-        }
+   /*
+    * Please erase this comment after reading. The issue with the last implementation was that: 
+    * hasAnySame(p1.getPosition(), p2.getPlacesVisited()) was NOT equal hasAnySame(p2..(), p1..())
+    * while it obviously should be commutative.
+    * It worked as 'does the first player's head touch the path of the second one?', 
+    * thus, if you switch p1 and p2, you will get false (head of p2 does not touch path of p1)
+    * 
+    * Even though it did not cause problems (since you check this for both players, and 
+    * for one of them you actually will get true)
+    * 
+    * Btw I've renamed the methods a little, but please feel free to change it again! if needed.
+    */
+    private boolean doPlayersCollide(Player p1, Player p2) {
+    	if( p1 == p2 ) return false;
+    	
+    	List<Player.Point> firstPlayerPath = p1.getPlacesVisited();
+    	List<Player.Point> secondPlayerPath = p2.getPlacesVisited();
+         
+    	for (Player.Point pointOne : firstPlayerPath) {
+            for (Player.Point pointTwo : secondPlayerPath) {
+            	if (pointOne.equals(pointTwo)) {
+                    return true;
+                }
+    		}
+    	}
         return false;
     }
 
