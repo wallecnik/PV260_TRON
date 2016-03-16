@@ -98,9 +98,12 @@ public class TronGameCore extends Core{
     }
 
    /*
-    * Please erase this comment after reading. The issue with the last implementation was that: 
+    * Please erase this comment after reading. 
+    * 
+    * The issue with the last implementation was that: 
     * hasAnySame(p1.getPosition(), p2.getPlacesVisited()) was NOT equal hasAnySame(p2..(), p1..())
     * while it obviously should be commutative.
+    * 
     * It worked as 'does the first player's head touch the path of the second one?', 
     * thus, if you switch p1 and p2, you will get false (head of p2 does not touch path of p1)
     * 
@@ -108,6 +111,7 @@ public class TronGameCore extends Core{
     * for one of them you actually will get true)
     * 
     * Btw I've renamed the methods a little, but please feel free to change it again! if needed.
+    * Please also feel free to refactor the code which I've added :) 
     */
     private boolean doPlayersCollide(Player p1, Player p2) {
     	if( p1 == p2 ) return false;
