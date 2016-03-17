@@ -15,16 +15,13 @@ public class Player {
     private Point position;
     private Direction currentDirection;
     private Color color;
-    private Controls controls;
 
     public Player(Point origin,
             Direction currentDirection,
-            Color color,
-            Controls controls) {
+            Color color) {
         this.position = origin;
         this.currentDirection = currentDirection;
         this.color = color;
-        this.controls = controls;
         this.placesVisited.add(this.position);
     }
 
@@ -45,13 +42,6 @@ public class Player {
         }
 
         this.placesVisited.add(this.position);
-    }
-
-    public void sendKeyEvent(int keyCode) {
-        final Direction direction = this.controls.direction(keyCode);
-        if (direction != null) {
-            this.changeDirection(direction);
-        }
     }
 
     public void changeDirection(Direction desiredDirection) {
@@ -75,6 +65,10 @@ public class Player {
 
     public void setPosition(Point position) {
         this.position = position;
+    }
+
+    public Direction getCurrentDirection() {
+        return currentDirection;
     }
 
     public Color getColor() {
@@ -101,6 +95,35 @@ public class Player {
             }
             return false;
         }
+
+        public Direction toRight() {
+            switch (this) {
+                case UP :
+                    return RIGHT;
+                case DOWN :
+                    return LEFT;
+                case LEFT :
+                    return UP;
+                case RIGHT :
+                    return DOWN;
+            }
+            return null;
+        }
+
+        public Direction toLeft() {
+            switch (this) {
+                case UP :
+                    return LEFT;
+                case DOWN :
+                    return RIGHT;
+                case LEFT :
+                    return DOWN;
+                case RIGHT :
+                    return UP;
+            }
+            return null;
+        }
+
     }
 
     public static class Point {
@@ -158,38 +181,6 @@ public class Player {
             result = 31 * result + getY();
             return result;
         }
-    }
-
-    public static class Controls {
-
-        private final int up;
-
-        private final int down;
-
-        private final int left;
-
-        private final int right;
-
-        public Controls(int up, int down, int left, int right) {
-            this.up = up;
-            this.down = down;
-            this.left = left;
-            this.right = right;
-        }
-
-        public Direction direction(int keyCode) {
-            if (keyCode == up) {
-                return Direction.UP;
-            } else if (keyCode == down) {
-                return Direction.DOWN;
-            } else if (keyCode == left) {
-                return Direction.LEFT;
-            } else if (keyCode == right) {
-                return Direction.RIGHT;
-            }
-            return null;
-        }
-
     }
 
 }

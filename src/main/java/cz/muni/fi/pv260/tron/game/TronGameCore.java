@@ -1,108 +1,70 @@
 package cz.muni.fi.pv260.tron.game;
 
 import cz.muni.fi.pv260.tron.game.model.Player;
+import cz.muni.fi.pv260.tron.game.model.PlayerManager;
 import cz.muni.fi.pv260.tron.sdk.Core;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TronGameCore extends Core {
 
-    private List<Player> players = new ArrayList<>();
-
-    private Dimension playgroundSize;
+    private PlayerManager playerManager = new PlayerManager();
 
     public void init() {
         this.createPlayers();
-        this.playgroundSize = new Dimension();
     }
 
     public void initWithPlaygroundSize(Dimension playgroundSize) {
         this.init();
-        this.playgroundSize = playgroundSize;
+        this.playerManager.setPlaygroundSize(playgroundSize);
     }
 
     private void createPlayers() {
-        this.players.add(new Player(new Player.Point(40, 40),
-                                    Player.Direction.RIGHT,
-                                    Color.red,
-                                    new Player.Controls(KeyEvent.VK_UP,
-                                                        KeyEvent.VK_DOWN,
-                                                        KeyEvent.VK_LEFT,
-                                                        KeyEvent.VK_RIGHT)));
-        this.players.add(new Player(new Player.Point(600, 440),
-                                    Player.Direction.LEFT,
-                                    Color.green,
-                                    new Player.Controls(KeyEvent.VK_W,
-                                                        KeyEvent.VK_S,
-                                                        KeyEvent.VK_A,
-                                                        KeyEvent.VK_D)));
+        this.playerManager.add(new Player(new Player.Point(40, 40),
+                                          Player.Direction.RIGHT,
+                                          Color.red),
+                               new PlayerManager.KeyControls(KeyEvent.VK_UP,
+                                                             KeyEvent.VK_DOWN,
+                                                             KeyEvent.VK_LEFT,
+                                                             KeyEvent.VK_RIGHT));
+        this.playerManager.add(new Player(new Player.Point(600, 440),
+                                          Player.Direction.LEFT,
+                                          Color.green),
+                               new PlayerManager.KeyControls(KeyEvent.VK_W,
+                                                             KeyEvent.VK_S,
+                                                             KeyEvent.VK_A,
+                                                             KeyEvent.VK_D));
 
-        this.players.add(new Player(new Player.Point(600, 120),
-                                    Player.Direction.LEFT,
-                                    Color.yellow,
-                                    new Player.Controls(KeyEvent.VK_U,
-                                                        KeyEvent.VK_J,
-                                                        KeyEvent.VK_H,
-                                                        KeyEvent.VK_K)));
-    }
-
-    public Dimension getPlaygroundSize() {
-        return this.playgroundSize;
+        this.playerManager.add(new Player(new Player.Point(600, 120),
+                                          Player.Direction.LEFT,
+                                          Color.yellow),
+                               new PlayerManager.MouseControls());
     }
 
     public List<Player> getPlayers() {
-        return this.players;
+        return new ArrayList<>(this.playerManager.getPlayers());
     }
 
     public void performGameTick() {
-        movePlayers();
-        returnPlayersWithinBounds();
+        playerManager.movePlayers();
         if (areThereCollisions()) {
             this.delegate.gameDidFinish();
         }
     }
 
-    private void movePlayers() {
-        for (Player player : this.players) {
-            player.makeStep();
-        }
-    }
-
-    private void returnPlayersWithinBounds() {
-        for (Player player : this.players) {
-            Player.Point position = player.getPosition();
-            if (position.getX() <= 0) {
-                player.setPosition(new Player.Point(playgroundSize.width,
-                                                    position.getY()));
-            }
-            if (position.getX() > playgroundSize.width) {
-                player.setPosition(new Player.Point(0,
-                                                    position.getY()));
-            }
-            if (position.getY() <= 0) {
-                player.setPosition(new Player.Point(position.getX(),
-                                                    playgroundSize.height));
-
-            }
-            if (position.getY() > playgroundSize.height) {
-                player.setPosition(new Player.Point(position.getX(),
-                                                    0));
-            }
-        }
-    }
-
     private boolean areThereCollisions() {
-        for (Player p : players) {
+        for (Player p : this.playerManager.getPlayers()) {
             if (p.hasSelfCollision()) {
                 return true;
             }
         }
 
-        for (Player p1 : players) {
-            for (Player p2 : players) {
+        for (Player p1 : this.playerManager.getPlayers()) {
+            for (Player p2 : this.playerManager.getPlayers()) {
                 if (doPlayersCollide(p1, p2)) {
                     return true;
                 }
@@ -144,9 +106,12 @@ public class TronGameCore extends Core {
         return false;
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
-        for (Player player : this.players) {
-            player.sendKeyEvent(e.getKeyCode());
-        }
+        playerManager.sendInputEvent(e);
+    }
+
+    public void mousePressed(MouseEvent e) {
+        playerManager.sendInputEvent(e);
     }
 }
