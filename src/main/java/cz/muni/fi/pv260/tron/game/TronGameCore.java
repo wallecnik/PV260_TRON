@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class TronGameCore extends Core {
 
-    private PlayerPlayground playerManager = new PlayerPlayground();
+    private PlayerPlayground playerPlayground = new PlayerPlayground();
 
     public void init() {
         this.createPlayers();
@@ -19,18 +19,18 @@ public class TronGameCore extends Core {
 
     public void initWithPlaygroundSize(Dimension playgroundSize) {
         this.init();
-        this.playerManager.setPlaygroundSize(playgroundSize);
+        this.playerPlayground.setPlaygroundSize(playgroundSize);
     }
 
     private void createPlayers() {
-        this.playerManager.add(new Player(new Player.Point(40, 40),
+        this.playerPlayground.add(new Player(new Player.Point(40, 40),
                                           Player.Direction.RIGHT,
                                           Color.red),
                                new PlayerPlayground.KeyControls(KeyEvent.VK_UP,
                                                              KeyEvent.VK_DOWN,
                                                              KeyEvent.VK_LEFT,
                                                              KeyEvent.VK_RIGHT));
-        this.playerManager.add(new Player(new Player.Point(600, 440),
+        this.playerPlayground.add(new Player(new Player.Point(600, 440),
                                           Player.Direction.LEFT,
                                           Color.green),
                                new PlayerPlayground.KeyControls(KeyEvent.VK_W,
@@ -38,19 +38,19 @@ public class TronGameCore extends Core {
                                                              KeyEvent.VK_A,
                                                              KeyEvent.VK_D));
 
-        this.playerManager.add(new Player(new Player.Point(600, 120),
+        this.playerPlayground.add(new Player(new Player.Point(600, 120),
                                           Player.Direction.LEFT,
                                           Color.yellow),
                                new PlayerPlayground.MouseControls());
     }
 
     public Set<Player> getPlayers() {
-        return this.playerManager.getPlayers();
+        return this.playerPlayground.getPlayers();
     }
 
     public void performGameTick() {
-        playerManager.movePlayers();
-        if (playerManager.doPlayersCollide()) {
+        playerPlayground.movePlayers();
+        if (playerPlayground.doPlayersCollide()) {
             this.delegate.gameDidFinish();
         }
     }
@@ -58,10 +58,10 @@ public class TronGameCore extends Core {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        playerManager.sendInputEvent(e);
+        playerPlayground.sendInputEvent(e);
     }
 
     public void mousePressed(MouseEvent e) {
-        playerManager.sendInputEvent(e);
+        playerPlayground.sendInputEvent(e);
     }
 }
