@@ -7,11 +7,12 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 /**
  * @author 422718
  */
-public class PlayerManager {
+public class PlayerPlayground {
 
     private Dimension playgroundSize;
 
@@ -46,6 +47,40 @@ public class PlayerManager {
             player.makeStep();
             this.returnPlayersOutOfBounds(player);
         }
+    }
+
+    public boolean doPlayersCollide() {
+        for (Player p : this.getPlayers()) {
+            if (p.hasSelfCollision()) {
+                return true;
+            }
+        }
+
+        for (Player p1 : this.getPlayers()) {
+            for (Player p2 : this.getPlayers()) {
+                if (doPlayersCollide(p1, p2)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean doPlayersCollide(Player p1, Player p2) {
+        if (p1 == p2)
+            return false;
+
+        List<Player.Point> firstPlayerPath = p1.getPlacesVisited();
+        List<Player.Point> secondPlayerPath = p2.getPlacesVisited();
+
+        for (Player.Point pointOne : firstPlayerPath) {
+            for (Player.Point pointTwo : secondPlayerPath) {
+                if (pointOne.equals(pointTwo)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void returnPlayersOutOfBounds(Player player) {
