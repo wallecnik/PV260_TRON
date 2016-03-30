@@ -11,9 +11,13 @@ import java.util.List;
 public class Player {
 
     private final static int SPEED = 5;
+
     private final List<Point> placesVisited = new ArrayList<>();
+
     private Point position;
+
     private Direction currentDirection;
+
     private Color color;
 
     public Player(Point origin,
@@ -26,21 +30,7 @@ public class Player {
     }
 
     public void makeStep() {
-        switch (currentDirection) {
-            case DOWN :
-                this.position = this.position.toDown(SPEED);
-                break;
-            case RIGHT :
-                this.position = this.position.toRight(SPEED);
-                break;
-            case UP :
-                this.position = this.position.toUp(SPEED);
-                break;
-            case LEFT :
-                this.position = this.position.toLeft(SPEED);
-                break;
-        }
-
+        this.position = this.position.move(this.currentDirection);
         this.placesVisited.add(this.position);
     }
 
@@ -80,20 +70,28 @@ public class Player {
     }
 
     public enum Direction {
-        UP, DOWN, LEFT, RIGHT;
+        UP(0, -1), DOWN(0, 1), LEFT(-1, 0), RIGHT(1, 0);
+
+        private final int x;
+
+        private final int y;
+
+        Direction(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
 
         private boolean isDirectionPossible(Direction direction) {
-            switch (this) {
-                case UP :
-                    return direction != DOWN;
-                case DOWN :
-                    return direction != UP;
-                case LEFT :
-                    return direction != RIGHT;
-                case RIGHT :
-                    return direction != LEFT;
-            }
-            return false;
+            return (this.getX() == 0 || direction.getX() == 0) &&
+                   (this.getY() == 0 || direction.getY() == 0);
         }
 
         public Direction toRight() {
@@ -145,20 +143,9 @@ public class Player {
             return y;
         }
 
-        public Point toUp(int speed) {
-            return new Point(this.x, this.y - speed);
-        }
-
-        public Point toDown(int speed) {
-            return new Point(this.x, this.y + speed);
-        }
-
-        public Point toLeft(int speed) {
-            return new Point(this.x - speed, this.y);
-        }
-
-        public Point toRight(int speed) {
-            return new Point(this.x + speed, this.y);
+        public Point move(Direction direction) {
+            return new Point(this.x + direction.getX() * SPEED,
+                             this.y + direction.getY() * SPEED);
         }
 
         @Override
